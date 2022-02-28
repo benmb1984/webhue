@@ -10,15 +10,35 @@
       <span aria-hidden="true"></span>
     </a>
   </div>
+</nav>
 
-  <div id="navbarBasicExample" class="navbar-menu">
-    <div class="navbar-start">
-      <a class="navbar-item">
-        Rooms
-      </a>
+<app-modal [isActive]="isNewUser" [hasCloseButton]="false">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-title">
+        WebHue heeft toegang nodig tot je Bridge
+      </div>
+    </div>
+    <div *ngIf="!isDetectingNewUser" class="card-content">
+      <div class="content">
+        <p>
+          Druk zometeen binnen 60 seconden op de link knop van je bridge.
+        </p>
+        <p>
+          Ben je er klaar voor om op de knop te drukken?
+        </p>
+        <button (click)="detectNewUser()" class="button is-primary">Ik ben er klaar voor</button>
+      </div>
+    </div>
+
+    <div *ngIf="isDetectingNewUser" class="card-content">
+      <div class="content">
+        <p>Druk nu op de knop je bridge.</p>
+        <progress class="progress is-primary" [value]="timeLeft" max="60"></progress>
+      </div>
     </div>
   </div>
-</nav>
+</app-modal>
 
 <p (click)="turnLightOn(true)">Lamp aan</p>
 <p (click)="turnLightOn(false)">Lamp uit</p>

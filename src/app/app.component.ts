@@ -9,8 +9,10 @@ import { tap } from 'rxjs/operators';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  bridgeIp!: string;
   secret = 'aUY3pgIfTn9AdYoqpoVgP44LOI5GBO8IEjbBjDEx';
+  isNewUser = false;
+  isDetectingNewUser = false;
+  timeLeft = 60;
 
   constructor(
     private http: HttpClient,
@@ -18,16 +20,36 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.authService.getBridgeIp().subscribe(data => {
-      this.bridgeIp = data[0].internalipaddress;
-      console.log(this.bridgeIp);
-    });
+    this.authService.fetchBridgeIp().subscribe(data => {
+      this.authService.bridgeIp = data;
 
+      if(this.authService.getUser()) {
+        this.isNewUser = true;
+      }
+    });
+  }
+
+  public detectNewUser(): void {
+    this.isDetectingNewUser = true;
+
+    const interval = setInterval(() => {
+      if(this.timeLeft > 0) {
+        this.timeLeft--;
+      } else {
+        clearInterval(interval);
+      }
+    }, 1000)
+
+
+
+    this.authService.fetchNewUser().subscribe(data => {
+      this.authService.setUser(data[0].success.username);
+    })
   }
 
   public turnLightOn(turnOn: boolean) {
     this.http.put(
-      `http://${this.bridgeIp}/api/${this.secret}/lights/5/state`, { on: turnOn }
+      `http://${this.authService.bridgeIp}/api/${this.secret}/lights/5/state`, { on: turnOn }
     ).subscribe(data => {
       console.log(data);
     });
