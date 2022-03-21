@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from './services/auth/auth.service';
+import { UserService, UserState } from './services/user/user.service';
+import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 @Component({
@@ -9,49 +10,36 @@ import { tap } from 'rxjs/operators';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  secret = 'aUY3pgIfTn9AdYoqpoVgP44LOI5GBO8IEjbBjDEx';
-  isNewUser = false;
-  isDetectingNewUser = false;
-  timeLeft = 60;
+  secret = 'aUY3pgIfTn9AdYoqpoVgP44LOI5GBO8IEjbBjDExa';
+  isRequestingAccess = false;
+  public bridge$!: Observable<any>;
 
   constructor(
     private http: HttpClient,
-    private authService: AuthService
+    private UserService: UserService,
   ) {}
 
   ngOnInit(): void {
-    this.authService.fetchBridgeIp().subscribe(data => {
-      this.authService.bridgeIp = data;
+    this.UserService.fetchBridgeIp().subscribe(data => {
+      this.UserService.bridgeIp = data;
+      this.bridge$ = this.http.get(`${this.UserService.bridgeIp}/api/${this.secret}`).pipe(
+        tap((data=> {
+          console.log(data.error);
+        }))
+      );
 
-      if(this.authService.getUser()) {
-        this.isNewUser = true;
-      }
+      // if(!this.UserService.getUser()) {
+      //   this.isRequestingAccess = true;
+      //   //this.userState = UserState.hasNoAccess;
+      // }
     });
   }
 
-  public detectNewUser(): void {
-    this.isDetectingNewUser = true;
-
-    const interval = setInterval(() => {
-      if(this.timeLeft > 0) {
-        this.timeLeft--;
-      } else {
-        clearInterval(interval);
-      }
-    }, 1000)
-
-
-
-    this.authService.fetchNewUser().subscribe(data => {
-      this.authService.setUser(data[0].success.username);
-    })
-  }
-
-  public turnLightOn(turnOn: boolean) {
-    this.http.put(
-      `http://${this.authService.bridgeIp}/api/${this.secret}/lights/5/state`, { on: turnOn }
-    ).subscribe(data => {
-      console.log(data);
-    });
-  }
+  // public turnLightOn(turnOn: boolean) {
+  //   this.http.put(
+  //     `http://${this.UserService.bridgeIp}/api/${this.secret}/lights/5/state`, { on: turnOn }
+  //   ).subscribe(data => {
+  //     console.log(data);
+  //   });
+  // }
 }

@@ -12,33 +12,22 @@
   </div>
 </nav>
 
-<app-modal [isActive]="isNewUser" [hasCloseButton]="false">
-  <div class="card">
-    <div class="card-header">
-      <div class="card-header-title">
-        WebHue heeft toegang nodig tot je Bridge
-      </div>
-    </div>
-    <div *ngIf="!isDetectingNewUser" class="card-content">
-      <div class="content">
-        <p>
-          Druk zometeen binnen 60 seconden op de link knop van je bridge.
-        </p>
-        <p>
-          Ben je er klaar voor om op de knop te drukken?
-        </p>
-        <button (click)="detectNewUser()" class="button is-primary">Ik ben er klaar voor</button>
-      </div>
-    </div>
-
-    <div *ngIf="isDetectingNewUser" class="card-content">
-      <div class="content">
-        <p>Druk nu op de knop je bridge.</p>
-        <progress class="progress is-primary" [value]="timeLeft" max="60"></progress>
-      </div>
-    </div>
+<div class="container">
+  <div class="notification is-success is-light">
+    <ng-container *ngIf="bridge$ | async as bridge; else loading">
+      Verbonden met <strong>{{bridge.config.name}}</strong> {{bridge.config.bridgeid}}
+    </ng-container>
+    <ng-template #loading>
+      <progress class="progress is-small is-primary"></progress>
+    </ng-template>
   </div>
-</app-modal>
+</div>
 
-<p (click)="turnLightOn(true)">Lamp aan</p>
-<p (click)="turnLightOn(false)">Lamp uit</p>
+
+
+<app-access-request *ngIf="isRequestingAccess"></app-access-request>
+
+
+
+<!-- <p (click)="turnLightOn(true)">Lamp aan</p>
+<p (click)="turnLightOn(false)">Lamp uit</p> -->

@@ -3,12 +3,19 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { BridgeIp } from './auth.interface';
+import { BridgeIp } from './user.interface';
+
+export enum UserState {
+  hasNoAccess = 'hasNoAccess',
+  hasToClickOnBridge = 'hasToClickOnBridge',
+  hasNotClickedOnBridge = 'hasNotClickedOnBridge',
+  hasAccess = 'hasAccess'
+}
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class UserService {
   public apiUrl!: string;
   public bridgeIp!: string;
 

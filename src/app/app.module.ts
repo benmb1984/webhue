@@ -4,11 +4,13 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AuthService } from './services/auth/auth.service';
+import { UserService } from './services/user/user.service';
 import { ModalComponent } from './components/modal/modal.component';
+import { AccessRequestComponent } from './components/access-request/access-request.component';
 
 @NgModule({
   declarations: [
+    AccessRequestComponent,
     AppComponent,
     ModalComponent
   ],
@@ -17,7 +19,7 @@ import { ModalComponent } from './components/modal/modal.component';
     BrowserModule,
     HttpClientModule
   ],
-  providers: [AuthService],
+  providers: [UserService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
